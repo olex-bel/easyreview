@@ -1,0 +1,25 @@
+{
+    "P0001": [
+        {
+            "reviewId": "R0001",
+            "raiting": 5,
+            "title": "Amazing product",
+            "summary": "I like this product",
+            "isReccomend": true
+        },
+        {
+            "reviewId": "R0002",
+            "raiting": 4,
+            "title": "This is ok",
+            "summary": "Just good product",
+            "isReccomend": true
+        },
+        {
+            "reviewId": "R0003",
+            "raiting": 3,
+            "title": "Not bad not good",
+            "summary": "I thought it will be better",
+            "isReccomend": false
+        }
+    ]
+}

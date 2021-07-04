@@ -1,0 +1,15 @@
+{
+    "email": "test1@test.com",
+    "nickname": "test_user1",
+    "isBlocked": false
+}
+{
+    "email": "test2@test.com",
+    "nickname": "test_user2",
+    "isBlocked": false
+}
+{
+    "email": "test3@test.com",
+    "nickname": "test_user3",
+    "isBlocked": true
+}
