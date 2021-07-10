@@ -31,6 +31,6 @@ var reviewSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     }
-});
+}, { collection: 'reviews' });
 
-module.exports = mongoose.model('review', reviewSchema);
+module.exports = mongoose.model('Reviews', reviewSchema);

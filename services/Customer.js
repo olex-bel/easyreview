@@ -11,12 +11,13 @@ async function getCustomerByEmail(email) {
     return customer;
 };
 
-async function createCustomer({ email }) {
+async function createCustomer({ email, nickname }) {
     const customer = new Customer();
     let newCustomer = null;
 
     customer.email = email;
     customer.isBlocked = false;
+    customer.nickname = nickname;
 
     try {
         newCustomer = await customer.save();
@@ -29,11 +30,11 @@ async function createCustomer({ email }) {
     return newCustomer;
 }
 
-async function getOrCreateCustomer({ email }) {
+async function getOrCreateCustomer({ email, nickname }) {
     let customer = await getCustomerByEmail(email);
 
     if (!customer) {
-        customer = await createCustomer({ email });
+        customer = await createCustomer({ email, nickname });
     }
 
     return customer;

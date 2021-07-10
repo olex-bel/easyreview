@@ -1,6 +1,6 @@
 const Review = require('../models/reviews.js');
 
-async function createReview({ productId, rating, title, summary, isRecommend, customerId }) {
+async function createReview({ productId, rating, title, summary, isRecommend, email }) {
     const review = new Review();
     let newReview = null;
 
@@ -9,7 +9,7 @@ async function createReview({ productId, rating, title, summary, isRecommend, cu
     review.title = title;
     review.summary = summary;
     review.isRecommend = isRecommend;
-    review.customer_id = customerId;
+    review.email = email;
 
     try {
         newReview = await review.save();

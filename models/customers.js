@@ -13,9 +13,9 @@ var customerSchema = mongoose.Schema({
         type: Boolean,
         require: true,
     }
-});
+}, { collection: 'customers' });
 
-const Customer = mongoose.model('customer', customerSchema);
+const Customer = mongoose.model('Customers', customerSchema);
 
 Customer.getCustomerByEmail = function (email) {
     let customer = null;

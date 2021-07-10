@@ -3,14 +3,37 @@ const CustomerService = require('../services/Customer');
 const ReviewService = require('../services/Review');
 
 async function getAllReviews(req, res) {
-    const { productId } = req.params
-    const reviews = await Review.find({ productId }).exec()
-    const {title, summary, rating, isRecommend, created_at}
+    const { productId } = req.params;
+    const reviews = await Review.aggregate([
+        { $match: { productId } },
+        {
+            $lookup: {
+                from: "customers",
+                localField: "email",
+                foreignField: "email",
+                as: 'customer'
+            }
+        },
+    ]).exec();
+
+    const data = reviews.map((review) => {
+        const { title, summary, rating, isRecommend, created_at } = review;
+        const { nickname } = review.customer;
+
+        return {
+            title,
+            summary,
+            rating,
+            isRecommend,
+            nickname,
+            created_at
+        };
+    });
 
     res.status(200).json({
         status: 'ok',
-        data: reviews,
-    })
+        data,
+    });
 }
 
 async function addReview(req, res) {
@@ -21,10 +44,11 @@ async function addReview(req, res) {
         summary,
         rating,
         isRecommend,
-        email
+        email,
+        nickname
     } = req.fields;
 
-    const customer = await CustomerService.getOrCreateCustomer({ email });
+    const customer = await CustomerService.getOrCreateCustomer({ email, nickname });
 
     if (!customer) {
         return res.status(500).json({
@@ -45,7 +69,7 @@ async function addReview(req, res) {
         title,
         summary,
         isRecommend,
-        customerId: customer._id
+        email: customer.email
     });
 
     if (review) {
