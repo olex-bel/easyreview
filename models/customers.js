@@ -5,10 +5,6 @@ var customerSchema = mongoose.Schema({
         type: String,
         require: true,
     },
-    nickname: {
-        type: String,
-        require: true,
-    },
     isBlocked: {
         type: Boolean,
         require: true,

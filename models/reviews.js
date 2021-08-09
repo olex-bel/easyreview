@@ -9,6 +9,10 @@ var reviewSchema = mongoose.Schema({
         type: String,
         require: true,
     },
+    nickname: {
+        type: String,
+        require: true,
+    },
     raiting: {
         type: Number,
         required: true,

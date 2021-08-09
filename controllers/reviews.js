@@ -1,6 +1,7 @@
 const Review = require('../models/reviews.js');
 const CustomerService = require('../services/Customer');
 const ReviewService = require('../services/Review');
+const { body, validationResult } = require('express-validator');
 
 async function getAllReviews(req, res) {
     const { productId } = req.params;
@@ -17,8 +18,7 @@ async function getAllReviews(req, res) {
     ]).exec();
 
     const data = reviews.map((review) => {
-        const { title, summary, rating, isRecommend, created_at } = review;
-        const { nickname } = review.customer;
+        const { title, summary, rating, isRecommend, created_at, nickname } = review;
 
         return {
             title,
@@ -39,6 +39,13 @@ async function getAllReviews(req, res) {
 async function addReview(req, res) {
     const { productId } = req.params;
 
+    const result = validationResult(req);
+    if (!result.isEmpty()) {
+        // Response will contain something like
+        // { errors: [ "body[password]: must be at least 10 chars long" ] }
+        return res.json({ errors: result.array() });
+    }
+
     const {
         title,
         summary,
@@ -46,9 +53,9 @@ async function addReview(req, res) {
         isRecommend,
         email,
         nickname
-    } = req.fields;
+    } = req.body;
 
-    const customer = await CustomerService.getOrCreateCustomer({ email, nickname });
+    const customer = await CustomerService.getOrCreateCustomer({ email });
 
     if (!customer) {
         return res.status(500).json({
@@ -69,6 +76,7 @@ async function addReview(req, res) {
         title,
         summary,
         isRecommend,
+        nickname,
         email: customer.email
     });
 
@@ -84,7 +92,17 @@ async function addReview(req, res) {
     }
 }
 
+var reviewValidate = [
+    body('email').isEmail().normalizeEmail(),
+    body('title').not().isEmpty().trim().escape(),
+    body('summary').not().isEmpty().trim().escape(),
+    body('rating').isInt({ min: 1, max: 5 }),
+    body('nickname').not().isEmpty().trim().escape(),
+    body('isRecommend').isBoolean(),
+];
+
 module.exports = {
     getAllReviews: getAllReviews,
-    addReview: addReview
+    addReview: addReview,
+    reviewValidate: reviewValidate,
 }

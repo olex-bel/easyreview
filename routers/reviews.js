@@ -3,10 +3,11 @@ var router = express.Router();
 
 const {
     getAllReviews,
-    addReview
+    addReview,
+    reviewValidate
 } = require('../controllers/reviews')
 
 router.get('/:productId', getAllReviews);
-router.post('/:productId', addReview)
+router.post('/:productId', reviewValidate, addReview)
 
 module.exports = router;
