@@ -4,6 +4,7 @@ var customerSchema = mongoose.Schema({
     email: {
         type: String,
         require: true,
+        unique: true,
     },
     isBlocked: {
         type: Boolean,

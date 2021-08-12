@@ -2,37 +2,39 @@ const Review = require('../models/reviews.js');
 const CustomerService = require('../services/Customer');
 const ReviewService = require('../services/Review');
 const { body, validationResult } = require('express-validator');
+const MAX_LIMIT = 10;
 
-async function getAllReviews(req, res) {
+async function getReviews(req, res) {
     const { productId } = req.params;
+    const { page = 1, limit = MAX_LIMIT } = req.query;
+    console.log((page - 1) * limit)
+    console.log(req.query)
     const reviews = await Review.aggregate([
         { $match: { productId } },
         {
-            $lookup: {
-                from: "customers",
-                localField: "email",
-                foreignField: "email",
-                as: 'customer'
+            $facet: {
+                "data": [
+                    { $skip: (page - 1) * limit },
+                    { $limit: limit * 1 },
+                    { $project: { email: 0 } }
+                ],
+                "metadata": [
+                    {
+                        $group: {
+                            _id: '$productId',
+                            'raiting_avg': { $avg: '$raiting' },
+                            'count': { $sum: 1 }
+                        }
+                    },
+                    { $project: { _id: 0 } }
+                ]
             }
-        },
+        }
     ]).exec();
-
-    const data = reviews.map((review) => {
-        const { title, summary, rating, isRecommend, created_at, nickname } = review;
-
-        return {
-            title,
-            summary,
-            rating,
-            isRecommend,
-            nickname,
-            created_at
-        };
-    });
 
     res.status(200).json({
         status: 'ok',
-        data,
+        data: reviews,
     });
 }
 
@@ -102,7 +104,7 @@ var reviewValidate = [
 ];
 
 module.exports = {
-    getAllReviews: getAllReviews,
+    getReviews: getReviews,
     addReview: addReview,
     reviewValidate: reviewValidate,
 }

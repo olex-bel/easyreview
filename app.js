@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const database = require('./database');
 const cors = require('cors');
+const mongoSanitize = require("express-mongo-sanitize");
 
 require('dotenv').config();
 
