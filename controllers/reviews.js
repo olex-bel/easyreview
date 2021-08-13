@@ -2,40 +2,50 @@ const Review = require('../models/reviews.js');
 const CustomerService = require('../services/Customer');
 const ReviewService = require('../services/Review');
 const { body, validationResult } = require('express-validator');
-const MAX_LIMIT = 10;
+const config = require('../config.js');
 
 async function getReviews(req, res) {
     const { productId } = req.params;
-    const { page = 1, limit = MAX_LIMIT } = req.query;
-    console.log((page - 1) * limit)
-    console.log(req.query)
-    const reviews = await Review.aggregate([
-        { $match: { productId } },
-        {
-            $facet: {
-                "data": [
-                    { $skip: (page - 1) * limit },
-                    { $limit: limit * 1 },
-                    { $project: { email: 0 } }
-                ],
-                "metadata": [
-                    {
-                        $group: {
-                            _id: '$productId',
-                            'raiting_avg': { $avg: '$raiting' },
-                            'count': { $sum: 1 }
-                        }
-                    },
-                    { $project: { _id: 0 } }
-                ]
-            }
-        }
-    ]).exec();
+    const { page = 1, limit = config.DEFAULT_PAGE_SIZE } = req.query;
+    let items = [];
+    let pagination = {
+        page,
+        limit,
+        count: 0,
+    };
+    let raiting_avg = -1;
 
-    res.status(200).json({
-        status: 'ok',
-        data: reviews,
-    });
+    if (limit > config.MAX_PAGE_SIZE) {
+        limit = config.MAX_PAGE_SIZE;
+    }
+
+    try {
+        const reviews = await ReviewService.getReviews({
+            productId,
+            page,
+            limit,
+        });
+
+        if (reviews.items.length > 0) {
+            items = reviews.items;
+            pagination.count = reviews.metadata[0].count;
+            raiting_avg = reviews.metadata[0].raiting_avg;
+        }
+
+        res.status(200).json({
+            status: 'ok',
+            data: {
+                items,
+                raiting_avg,
+                pagination,
+            },
+        });
+    } catch (e) {
+        console.log(e);
+        res.status(200).json({
+            status: 'error',
+        });
+    }
 }
 
 async function addReview(req, res) {

@@ -21,6 +21,34 @@ async function createReview({ productId, rating, title, summary, isRecommend, em
     return newReview;
 }
 
+async function getReviews({ productId, page, limit }) {
+    const result = await Review.aggregate([
+        { $match: { productId } },
+        {
+            $facet: {
+                "items": [
+                    { $skip: (page - 1) * limit },
+                    { $limit: limit * 1 },
+                    { $project: { email: 0 } }
+                ],
+                "metadata": [
+                    {
+                        $group: {
+                            _id: '$productId',
+                            'raiting_avg': { $avg: '$raiting' },
+                            'count': { $sum: 1 }
+                        }
+                    },
+                    { $project: { _id: 0 } }
+                ]
+            }
+        }
+    ]).exec();
+
+    return result[0];
+}
+
 module.exports = {
     createReview,
+    getReviews,
 };
