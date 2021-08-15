@@ -7,42 +7,33 @@ const config = require('../config.js');
 async function getReviews(req, res) {
     const { productId } = req.params;
     const { page = 1, limit = config.DEFAULT_PAGE_SIZE } = req.query;
-    let items = [];
+    let reviews = [];
     let pagination = {
         page,
         limit,
-        count: 0,
     };
-    let raiting_avg = -1;
 
     if (limit > config.MAX_PAGE_SIZE) {
         limit = config.MAX_PAGE_SIZE;
     }
 
     try {
-        const reviews = await ReviewService.getReviews({
+        reviews = await ReviewService.getReviews({
             productId,
             page,
             limit,
         });
 
-        if (reviews.items.length > 0) {
-            items = reviews.items;
-            pagination.count = reviews.metadata[0].count;
-            raiting_avg = reviews.metadata[0].raiting_avg;
-        }
-
         res.status(200).json({
             status: 'ok',
             data: {
-                items,
-                raiting_avg,
+                reviews,
                 pagination,
             },
         });
     } catch (e) {
         console.log(e);
-        res.status(200).json({
+        res.status(500).json({
             status: 'error',
         });
     }
@@ -104,6 +95,38 @@ async function addReview(req, res) {
     }
 }
 
+async function getReviewsSummary(req, res) {
+    const { productId } = req.params;
+
+    try {
+        const summary = await ReviewService.getReviewsSummary({ productId });
+        let data = {
+            raitingAvg: -1,
+            reviewsCount: 0,
+        }
+
+        if (summary) {
+            data = {
+                raitingAvg: Number(summary.raitingAvg.toFixed(2)),
+                reviewsCount: summary.reviewsCount,
+            };
+        }
+
+        res.json({
+            status: 'ok',
+            data,
+        });
+
+    } catch (e) {
+
+        console.log(e);
+
+        res.status(500).json({
+            status: 'error',
+        });
+    }
+}
+
 var reviewValidate = [
     body('email').isEmail().normalizeEmail(),
     body('title').not().isEmpty().trim().escape(),
@@ -116,5 +139,6 @@ var reviewValidate = [
 module.exports = {
     getReviews: getReviews,
     addReview: addReview,
+    getReviewsSummary: getReviewsSummary,
     reviewValidate: reviewValidate,
 }
