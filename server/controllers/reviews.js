@@ -49,9 +49,11 @@ async function addReview(req, res) {
 
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        // Response will contain something like
-        // { errors: [ "body[password]: must be at least 10 chars long" ] }
-        return res.json({ errors: result.array() });
+        return res.status(500).json({
+            status: 'error',
+            message: 'There are items that required your attention.',
+            errors: result.array()
+        });
     }
 
     const {
@@ -68,6 +70,7 @@ async function addReview(req, res) {
     if (!customer) {
         return res.status(500).json({
             status: 'error',
+            message: 'Your review cannot be submitted. Please contact customer service.',
         });
     }
 
@@ -96,6 +99,7 @@ async function addReview(req, res) {
     } else {
         return res.status(500).json({
             status: 'error',
+            message: 'Your review cannot be submitted. Please contact customer service.',
         });
     }
 }
