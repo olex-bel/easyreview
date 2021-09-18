@@ -1,7 +1,7 @@
 {
     "productId": "P001",
     "email": "test1@test.com",
-    "raiting": 5,
+    "rating": 5,
     "title": "Amazing product",
     "summary": "Absolutely recommend this product",
     "isReccomend": true,
@@ -12,7 +12,7 @@
 {
     "productId": "P001",
     "email": "test2@test.com",
-    "raiting": 2,
+    "rating": 2,
     "title": "It can be better",
     "summary": "Will not buy again",
     "isReccomend": false,

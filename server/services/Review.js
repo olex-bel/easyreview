@@ -21,9 +21,10 @@ async function createReview({ productId, rating, title, summary, isRecommend, em
     return newReview;
 }
 
-async function getReviews({ productId, page, limit }) {
-    const result = await Review.find({ productId }, { email: 0 })
-        .skip((page - 1) * limit)
+async function getReviews({ productId, skip, limit }) {
+    let query = { productId };
+    const result = await Review.find(query, { email: 0 })
+        .skip(skip)
         .limit(limit * 1)
         .exec();
 

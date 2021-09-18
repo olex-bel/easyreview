@@ -13,7 +13,7 @@ var reviewSchema = mongoose.Schema({
         type: String,
         require: true,
     },
-    raiting: {
+    rating: {
         type: Number,
         required: true,
         min: 1,
@@ -27,7 +27,7 @@ var reviewSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    isReccomend: {
+    isRecommend: {
         type: Boolean,
         required: true
     },

@@ -1,4 +1,3 @@
-const Review = require('../models/reviews.js');
 const CustomerService = require('../services/Customer');
 const ReviewService = require('../services/Review');
 const { body, validationResult } = require('express-validator');
@@ -6,23 +5,29 @@ const config = require('../config.js');
 
 async function getReviews(req, res) {
     const { productId } = req.params;
-    const { page = 1, limit = config.DEFAULT_PAGE_SIZE } = req.query;
     let reviews = [];
-    let pagination = {
-        page,
-        limit,
-    };
+    let skip = req.query.skip ? parseInt(req.query.skip, 10) : 0;
+    let limit = req.query.limit ? parseInt(req.query.limit, 10) : config.DEFAULT_PAGE_SIZE;
 
     if (limit > config.MAX_PAGE_SIZE) {
         limit = config.MAX_PAGE_SIZE;
     }
 
+    let pagination = {
+        limit,
+    };
+
     try {
         reviews = await ReviewService.getReviews({
             productId,
-            page,
+            skip,
             limit,
         });
+
+        if (reviews.length) {
+            pagination.skip = skip + reviews.length;
+            pagination.hasMoreReviews = reviews.length === limit;
+        }
 
         res.status(200).json({
             status: 'ok',
