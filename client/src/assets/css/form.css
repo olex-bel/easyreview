@@ -1,6 +1,35 @@
+@media only screen and (min-width: 768px) {
+    .formfield__wrapper {
+        display: flex;
+        padding-bottom: 0.5em;
+        flex-direction: row;
+    }
+
+    .formfield__label-wrapper {
+        width: 25%;
+    }
+    
+    .formfield__input-wrapper {
+        width: 75%;
+    }
+
+    .button__submit {
+        width: 10%;
+    }
+}
+
 .formfield__wrapper {
     display: flex;
     padding-bottom: 0.5em;
+    flex-direction: column;
+}
+
+.formfield__label-wrapper {
+    width: 100%;
+}
+
+.formfield__input-wrapper {
+    width: 100%;
 }
 
 .formfield__wrapper--justify-end {
@@ -9,14 +38,6 @@
 
 .formfield__wrapper--align-center {
     align-items: center;
-}
-
-.formfield__label-wrapper {
-    width: 25%;
-}
-
-.formfield__input-wrapper {
-    width: 75%;
 }
 
 .formfield__label {
@@ -63,7 +84,7 @@
 }
 
 .button__submit {
-    width: 10%;
+    width: 100%;
     float: left;
 }
 

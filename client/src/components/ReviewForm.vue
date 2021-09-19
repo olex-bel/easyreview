@@ -183,7 +183,13 @@ export default {
   float: left;
 }
 
+@media only screen and (min-width: 768px) {
+  .reviewform__submit-wrapper {
+    width: 75%;
+  }
+}
+
 .reviewform__submit-wrapper {
-  width: 75%;
+  width: 100%;
 }
 </style>
