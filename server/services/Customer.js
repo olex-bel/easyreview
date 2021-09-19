@@ -37,8 +37,13 @@ async function getOrCreateCustomer({ email }) {
     return customer;
 }
 
+async function blockCustomer({ email }) {
+    return await Customer.updateOne({ email }, { isBlocked: true });
+}
+
 module.exports = {
     getCustomerByEmail,
     createCustomer,
     getOrCreateCustomer,
+    blockCustomer,
 };
