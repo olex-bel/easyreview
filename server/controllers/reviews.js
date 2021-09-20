@@ -49,7 +49,7 @@ async function addReview(req, res) {
 
     const result = validationResult(req);
     if (!result.isEmpty()) {
-        return res.status(500).json({
+        return res.status(400).json({
             status: 'error',
             message: 'There are items that required your attention.',
             errors: result.array()

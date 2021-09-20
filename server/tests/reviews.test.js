@@ -93,7 +93,7 @@ describe('Review API tests', () => {
             .post('/api/v1/reviews/P001')
             .send('isRecommend=true')
             .then(response => {
-                expect(response.statusCode).toBe(500);
+                expect(response.statusCode).toBe(400);
                 expect(response.body).toHaveProperty('status');
                 expect(response.body.status).toBe('error');
                 done();
